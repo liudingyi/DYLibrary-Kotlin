@@ -90,7 +90,7 @@ class TitleBar(context: Context, attrs: AttributeSet?) : FrameLayout(context, at
     /**
      * 设置标题
      */
-    fun setTitle(title: String) {
+    fun setTitle(title: String?) {
         mTvTitle?.text = title
     }
 
@@ -172,7 +172,7 @@ class TitleBar(context: Context, attrs: AttributeSet?) : FrameLayout(context, at
     /**
      * 创建Text
      */
-    private fun createText(text: String, background: Int, isNavigation: Boolean): TextView {
+    private fun createText(text: String?, background: Int, isNavigation: Boolean): TextView {
         return TextView(context).apply {
             if (background > 0) {
                 val paddingH = PixelUtils.dp2px(context, 8f)
@@ -199,7 +199,7 @@ class TitleBar(context: Context, attrs: AttributeSet?) : FrameLayout(context, at
     /**
      * 设置导航栏的点击事件
      */
-    fun setNavigationClickListener(navigationClickListener: OnClickListener) {
+    fun setNavigationClickListener(navigationClickListener: OnClickListener?) {
         for (i in 0..mLayoutNavigation!!.childCount) {
             mLayoutNavigation!!.getChildAt(i)?.setOnClickListener(navigationClickListener)
         }
@@ -208,7 +208,7 @@ class TitleBar(context: Context, attrs: AttributeSet?) : FrameLayout(context, at
     /**
      * 设置菜单栏的点击事件
      */
-    fun setMenuClickListener(menuClickListener: OnClickListener) {
+    fun setMenuClickListener(menuClickListener: OnClickListener?) {
         for (i in 0..mLayoutMenu!!.childCount) {
             mLayoutMenu!!.getChildAt(i)?.setOnClickListener(menuClickListener)
         }
