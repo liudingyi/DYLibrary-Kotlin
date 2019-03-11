@@ -7,5 +7,7 @@
         <attr name="navigation_text_color" format="color|reference" />
         <attr name="menu_text_size" format="integer" />
         <attr name="menu_text_color" format="color|reference" />
+        <attr name="is_immersive" format="boolean" />
+        <attr name="title_bar_background" format="color|reference" />
     </declare-styleable>
 </resources>

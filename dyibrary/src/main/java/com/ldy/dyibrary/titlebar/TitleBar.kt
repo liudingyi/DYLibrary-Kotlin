@@ -8,12 +8,10 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import com.ldy.dyibrary.R
 import com.ldy.dyibrary.titlebar.data.TitleItem
+import com.ldy.dyibrary.util.PhoneBarUtils
 import com.ldy.dyibrary.util.PixelUtils
 
 /**
@@ -21,6 +19,7 @@ import com.ldy.dyibrary.util.PixelUtils
  */
 class TitleBar(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
 
+    private var mLayoutTitleBar: RelativeLayout? = null//标题容器
     private var mTvTitle: TextView? = null//标题
     private var mLayoutNavigation: LinearLayout? = null//导航栏
     private var mLayoutMenu: LinearLayout? = null//菜单栏
@@ -31,6 +30,8 @@ class TitleBar(context: Context, attrs: AttributeSet?) : FrameLayout(context, at
     private var navigationTextColor: Int = 0//导航栏文字颜色
     private var menuTextSize: Int = 0//菜单栏文字大小
     private var menuTextColor: Int = 0//菜单栏文字颜色
+    private var isImmersive: Boolean = false//是否是沉浸式
+    private var titleBarBackground: Int = 0//标题容器的背景色
 
     init {
         //初始化
@@ -43,10 +44,17 @@ class TitleBar(context: Context, attrs: AttributeSet?) : FrameLayout(context, at
         var mode = MeasureSpec.getMode(heightMeasureSpec)
         if (mode != MeasureSpec.EXACTLY) {
             var height = PixelUtils.dp2px(context, 48f)
+            height = if (isImmersive) height + PhoneBarUtils.getStatusBarHeight(context) else height
             var newHeightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
             super.onMeasure(widthMeasureSpec, newHeightMeasureSpec)
         } else {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+            var newHeightMeasureSpec = heightMeasureSpec
+            if (isImmersive) {
+                var height = MeasureSpec.getSize(heightMeasureSpec)
+                height += PhoneBarUtils.getStatusBarHeight(context)
+                newHeightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+            }
+            super.onMeasure(widthMeasureSpec, newHeightMeasureSpec)
         }
     }
 
@@ -63,13 +71,22 @@ class TitleBar(context: Context, attrs: AttributeSet?) : FrameLayout(context, at
                 navigationTextColor = getColor(R.styleable.TitleBar_navigation_text_color, Color.GRAY)
                 menuTextSize = getInteger(R.styleable.TitleBar_menu_text_size, 14)
                 menuTextColor = getColor(R.styleable.TitleBar_menu_text_color, Color.GRAY)
+                isImmersive = getBoolean(R.styleable.TitleBar_is_immersive, false)
+                titleBarBackground = getResourceId(R.styleable.TitleBar_title_bar_background, Color.TRANSPARENT)
             }
             typedArray.recycle()
         }
         View.inflate(context, R.layout.layout_title_bar, this@TitleBar)
+        mLayoutTitleBar = findViewById(R.id.layout_title_bar)
         mTvTitle = findViewById(R.id.tv_title)
         mLayoutNavigation = findViewById(R.id.layout_navigation)
         mLayoutMenu = findViewById(R.id.layout_menu)
+        if (isImmersive) {
+            (mLayoutTitleBar?.layoutParams as FrameLayout.LayoutParams).topMargin = PhoneBarUtils.getStatusBarHeight(context)
+        }
+        if (titleBarBackground > 0) {
+            mLayoutTitleBar?.setBackgroundResource(titleBarBackground)
+        }
     }
 
     /**
